@@ -81,13 +81,6 @@ let wheel = {
   date: new Date(),
   users: [],
 };
-let timeSpin = 45;
-// set port, listen for requests
-const PORT = process.env.PORT || 2083;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}.`);
-  initial();
-});
 const { Server } = require("socket.io");
 
 function initial() {
@@ -421,3 +414,10 @@ function initial() {
     }
   });
 }
+let timeSpin = 45;
+// set port, listen for requests
+const PORT = process.env.PORT || 2083;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}.`);
+  initial();
+});
