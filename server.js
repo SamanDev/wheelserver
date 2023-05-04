@@ -127,7 +127,6 @@ function initial() {
     console.log(reason); // else the socket will automatically try to reconnect
   });
   wheelNamespace.on("connection", (socket) => {
-    createWheelData();
     socket.on("getwheel", () => {
       wheelNamespace
         .in(socket.user)
@@ -292,7 +291,10 @@ function initial() {
   };
 
   const getPrizePos = (users) => {
-    var newPrizeNumber = segments.length;
+    var newPrizeNumber = users?.serverCode * users?.startNum;
+
+    newPrizeNumber = newPrizeNumber + users?.serverCode * users?.serverSec;
+    newPrizeNumber = newPrizeNumber % segments.length;
 
     return newPrizeNumber;
   };
