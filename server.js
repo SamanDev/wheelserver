@@ -5,7 +5,7 @@ const dbConfig = require("./app/config/db.config");
 const app = express();
 
 var corsOptions = {
-  origin: "http://localhost:3000",
+  origin: "https://www.charkheshans.com",
 };
 
 app.use(cors(corsOptions));
@@ -93,7 +93,7 @@ const { Server } = require("socket.io");
 
 const io = new Server(2020, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: ["https://www.charkheshans.com", "http://localhost:3000"],
     // or with an array of origins
     // origin: ["https://my-frontend.com", "https://my-other-frontend.com", "http://localhost:3000"],
   },
