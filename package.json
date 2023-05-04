@@ -1,11 +1,10 @@
 {
   "name": "my-project",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server",
-    "build": "nodemon server"
+    "start": "nodemon server"
   },
   "keywords": [],
   "author": "",
