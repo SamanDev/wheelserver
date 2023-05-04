@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const dbConfig = require("./app/config/db.config");
 
 const app = express();
 
@@ -85,13 +84,13 @@ let wheel = {
 };
 let timeSpin = 45;
 // set port, listen for requests
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 2083;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
 const { Server } = require("socket.io");
 
-const io = new Server(80, {
+const io = new Server(2087, {
   cors: {
     origin: ["https://www.charkheshans.com", "http://localhost:3000"],
     // or with an array of origins
@@ -184,102 +183,7 @@ wheelNamespace.on("connection", (socket) => {
 });
 function initial() {
   console.log("initial");
-  const createWheelData = () => {
-    const d = new Date();
-    let seconds = d.getSeconds();
-    let newwheel = {
-      status: "Pending",
-      number: 0,
-      total: 0,
-      net: 0,
-      serverCode: Math.floor(Math.random() * 9999),
-      avex: 0,
-      aveBetx: 0,
-      serverSec: seconds,
-      startNum: wheel.number,
-      date: d,
-      users: [],
-    };
 
-    wheel = newwheel;
-
-    wheelNamespace.emit("msg", {
-      command: "update",
-      data: wheel,
-    });
-    setTimeout(() => {
-      spin();
-    }, 30000);
-  };
-  const spin = () => {
-    const d = new Date();
-    let seconds = d.getSeconds();
-
-    wheel.serverSec = seconds;
-    let newPrizeNumber = getPrizePos(wheel);
-    wheel.number = newPrizeNumber;
-
-    wheel.status = "Spin";
-    wheelNamespace.emit("msg", {
-      command: "update",
-      data: wheel,
-    });
-    setTimeout(() => {
-      spinstop();
-    }, 10000);
-    if (wheel.users.length > 0) {
-      dec();
-    }
-  };
-  const spinstop = () => {
-    var _time = 1000;
-    wheel.status = "Spining";
-    var _tot = 0;
-    var _net = 0;
-    if (wheel.users.length > 0) {
-      wheel.users.forEach((item) => {
-        item.win = item.bet * getPrize(segments[wheel.number], item.position);
-        _tot = _tot + item.bet;
-        _net = _net + item.win;
-      });
-    }
-    wheel.total = _tot;
-    wheel.net = _net;
-    wheelNamespace.emit("msg", {
-      command: "update",
-      data: wheel,
-    });
-    if (wheel.users.length > 0) {
-      _time = 2000;
-      inc();
-    }
-
-    setTimeout(() => {
-      doneWheel();
-    }, _time);
-  };
-  const doneWheel = async () => {
-    var _time = 1000;
-    wheel.status = "Done";
-    wheelNamespace.emit("msg", {
-      command: "update",
-      data: wheel,
-    });
-    if (wheel.total > 0) {
-      _time = 3000;
-      let wu = wheel.users;
-      var wheeldb = await createWheel(wheel);
-
-      wu.forEach(async (item) => {
-        item.pid = wheeldb._id;
-        var user = await createUser(wheeldb._id, item);
-      });
-    }
-
-    setTimeout(() => {
-      createWheelData();
-    }, _time);
-  };
   createWheelData();
   Role.estimatedDocumentCount((err, count) => {
     if (!err && count === 0) {
@@ -315,7 +219,102 @@ function initial() {
     }
   });
 }
+const createWheelData = () => {
+  const d = new Date();
+  let seconds = d.getSeconds();
+  let newwheel = {
+    status: "Pending",
+    number: 0,
+    total: 0,
+    net: 0,
+    serverCode: Math.floor(Math.random() * 9999),
+    avex: 0,
+    aveBetx: 0,
+    serverSec: seconds,
+    startNum: wheel.number,
+    date: d,
+    users: [],
+  };
 
+  wheel = newwheel;
+
+  wheelNamespace.emit("msg", {
+    command: "update",
+    data: wheel,
+  });
+  setTimeout(() => {
+    spin();
+  }, 30000);
+};
+const spin = () => {
+  const d = new Date();
+  let seconds = d.getSeconds();
+
+  wheel.serverSec = seconds;
+  let newPrizeNumber = getPrizePos(wheel);
+  wheel.number = newPrizeNumber;
+
+  wheel.status = "Spin";
+  wheelNamespace.emit("msg", {
+    command: "update",
+    data: wheel,
+  });
+  setTimeout(() => {
+    spinstop();
+  }, 10000);
+  if (wheel.users.length > 0) {
+    dec();
+  }
+};
+const spinstop = () => {
+  var _time = 1000;
+  wheel.status = "Spining";
+  var _tot = 0;
+  var _net = 0;
+  if (wheel.users.length > 0) {
+    wheel.users.forEach((item) => {
+      item.win = item.bet * getPrize(segments[wheel.number], item.position);
+      _tot = _tot + item.bet;
+      _net = _net + item.win;
+    });
+  }
+  wheel.total = _tot;
+  wheel.net = _net;
+  wheelNamespace.emit("msg", {
+    command: "update",
+    data: wheel,
+  });
+  if (wheel.users.length > 0) {
+    _time = 2000;
+    inc();
+  }
+
+  setTimeout(() => {
+    doneWheel();
+  }, _time);
+};
+const doneWheel = async () => {
+  var _time = 1000;
+  wheel.status = "Done";
+  wheelNamespace.emit("msg", {
+    command: "update",
+    data: wheel,
+  });
+  if (wheel.total > 0) {
+    _time = 3000;
+    let wu = wheel.users;
+    var wheeldb = await createWheel(wheel);
+
+    wu.forEach(async (item) => {
+      item.pid = wheeldb._id;
+      var user = await createUser(wheeldb._id, item);
+    });
+  }
+
+  setTimeout(() => {
+    createWheelData();
+  }, _time);
+};
 const getPrize = (newPrizeNumber, pos) => {
   var num = 0;
   if (parseInt(newPrizeNumber.replace("x", "")) == parseInt(pos)) {
@@ -391,22 +390,6 @@ const getPrizeAve = (wheel, pos) => {
   return num;
 };
 
-function groupBySingleField(data, field) {
-  return data.reduce((acc, val) => {
-    const rest = Object.keys(val).reduce((newObj, key) => {
-      if (key !== field) {
-        newObj[key] = val[key];
-      }
-      return newObj;
-    }, {});
-    if (acc[val[field]]) {
-      acc[val[field]].push(rest);
-    } else {
-      acc[val[field]] = [rest];
-    }
-    return acc;
-  }, {});
-}
 const sumOfBet = (array) => {
   return array.reduce((sum, currentValue) => {
     var _am = currentValue.bet;
