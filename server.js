@@ -91,7 +91,7 @@ app.listen(PORT, () => {
 });
 const { Server } = require("socket.io");
 
-const io = new Server(2020, {
+const io = new Server(80, {
   cors: {
     origin: ["https://www.charkheshans.com", "http://localhost:3000"],
     // or with an array of origins
