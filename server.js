@@ -218,8 +218,8 @@ function initial() {
     let seconds = d.getSeconds();
 
     wheel.serverSec = seconds;
-    let newPrizeNumber = getPrizePos(wheel);
-    wheel.number = newPrizeNumber;
+    let newPrizeNumbern = getPrizePos(wheel);
+    wheel.number = newPrizeNumbern;
 
     wheel.status = "Spin";
     wheelNamespace.emit("msg", {
