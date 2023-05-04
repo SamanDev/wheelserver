@@ -292,10 +292,7 @@ function initial() {
   };
 
   const getPrizePos = (users) => {
-    var newPrizeNumber = users?.serverCode * users?.startNum;
-
-    newPrizeNumber = newPrizeNumber + users?.serverCode * users?.serverSec;
-    newPrizeNumber = newPrizeNumber % segments.length;
+    var newPrizeNumber = segments.length;
 
     return newPrizeNumber;
   };
