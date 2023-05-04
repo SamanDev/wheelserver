@@ -354,9 +354,9 @@ function groupBySingleField(data, field) {
   }, {});
 }
 const getPrizePos = (users) => {
-  var newPrizeNumber = users.serverCode * users?.startNum;
+  var newPrizeNumber = users?.serverCode * users?.startNum;
 
-  newPrizeNumber = newPrizeNumber + users.serverCode * users?.serverSec;
+  newPrizeNumber = newPrizeNumber + users?.serverCode * users?.serverSec;
   newPrizeNumber = newPrizeNumber % segments.length;
 
   return newPrizeNumber;
